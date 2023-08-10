@@ -1,0 +1,32 @@
+# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+version: '3.8'
+
+services:
+  database-mysql:
+    container_name: mysql-container
+    image: mysql:5.7
+    ports:
+      - 127.0.0.1:3305:3305
+#    volumes:
+#      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: assignmentDB
+      TZ: Asia/Seoul
+#    command:
+#      - '--character-set-server=utf8mb4'
+#      - '--collation-server=utf8mb4_unicode_ci'
+#    networks:
+#      - spring-network
+#    healthcheck:
+#      test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD']
+#      interval: 10s
+#      timeout: 2s
+#      retries: 100
+  database-redis:
+    container_name: redis
+    image: redis:alpine
+    # 접근 포트 설정(컨테이너 외부:컨테이너 내부)
+    ports:
+      - 127.0.0.1:6379:6379
+
