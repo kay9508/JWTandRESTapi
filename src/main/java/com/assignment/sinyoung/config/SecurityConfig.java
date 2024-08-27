@@ -6,7 +6,6 @@ import com.assignment.sinyoung.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -15,6 +14,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -42,12 +42,19 @@ public class SecurityConfig {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
+    /**
+     * 시큐리티 버전 6.1.1에서는 requestMatchers 에 직접적인 url을 작성했으나 6.1.2이상에서는 AntPathRequestMatcher 로 감싸줘야한다.
+     * @return
+     */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                .requestMatchers("/", "/cgi-bin/**", "/error", "/auth/login", "/verify/**", "/SDK/**","/ping.js","/boaform/admin/formLogin")
-                .requestMatchers(HttpMethod.POST,"/user");
+                .requestMatchers(
+                        new AntPathRequestMatcher("/auth/login"),
+                        new AntPathRequestMatcher("/verify/**"),
+                        new AntPathRequestMatcher("/boaform/admin/formLogin"),
+                        new AntPathRequestMatcher("/user")
+                        );
     }
-    //TODO permitAll 사용 다시 확인 필요
 
 }
